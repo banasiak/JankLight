@@ -12,7 +12,7 @@ public class JankLight {
         System.out.println("Welcome to JankLight!");
 
         if (args.length < 1) {
-            System.out.println("Usage: JankLight client");
+            System.out.println("Usage: JankLight client <api.cyberguyenterprises.com>");
             System.out.println("Usage: JankLight server <keystore.jks> <password>");
             return;
         }
@@ -20,7 +20,7 @@ public class JankLight {
         switch(args[0]) {
             case "client":
                 System.out.println("Activating client mode...");
-                JankLightClient client = new JankLightClient();
+                JankLightClient client = new JankLightClient(args[1]);
                 client.connectToServer();
                 break;
             case "server":

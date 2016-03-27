@@ -9,17 +9,19 @@ import java.net.URI;
 
 public class JankLightClient {
 
-    private static final String SERVER = "wss://localhost:4567/socket/";
-
     private static Session webSocketSession;
 
     private Thread keepAliveThread;
 
-    public JankLightClient() {
-        System.out.println("Client instantiated");
+    String server;
+
+    public JankLightClient(String server) {
+        this.server = server;
 
         keepAliveThread = new Thread(new KeepAliveTask());
         keepAliveThread.start();
+
+        System.out.println("Client instantiated");
     }
 
     public void connectToServer() {
@@ -32,7 +34,7 @@ public class JankLightClient {
 
         try{
             client.start();
-            URI uri = new URI(SERVER);
+            URI uri = new URI("wss://" + server + "/socket/");
             ClientUpgradeRequest request = new ClientUpgradeRequest();
 
             System.out.println("Connecting to: " + uri);
