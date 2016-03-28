@@ -7,10 +7,11 @@ import com.amazon.speech.speechlet.IntentRequest;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.banasiak.java.janklight.Colors;
+import com.banasiak.java.janklight.JankLight;
 
 import org.eclipse.jetty.websocket.api.Session;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.IOException;
 
 import spark.Spark;
@@ -60,7 +61,12 @@ public class JankLightServer {
             case "ChangeColorIntent":
                 String colorName = intent.getSlot("Color").getValue();
                 if(changeLightColor(colorName)) {
-                    return "Jank Light has been changed to " + colorName;
+                    return "Jank Light is now " + colorName;
+                }
+                break;
+            case "CycleColorsIntent":
+                if(cycleLightColors()) {
+                    return "Welcome to the jank party!";
                 }
                 break;
             case "IsConnectedIntent":
@@ -87,6 +93,21 @@ public class JankLightServer {
             return true;
         } else {
             System.out.println("ERROR: Cannot set light to: " + colorName);
+            return false;
+        }
+    }
+
+    private boolean cycleLightColors() {
+        if (webSocketSession != null) {
+            try {
+                System.out.println("Cycle light colors");
+                webSocketSession.getRemote().sendString(JankLight.PARTY_MODE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }else {
+            System.out.println("No device connected to websocket");
             return false;
         }
     }

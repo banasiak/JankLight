@@ -7,6 +7,7 @@ public class JankLight {
 
     public static final String PING = "PING";
     public static final String PONG = "PONG";
+    public static final String PARTY_MODE = "PARTY_MODE";
 
     public static void main(String[] args) {
         System.out.println("Welcome to JankLight!");

@@ -1,6 +1,7 @@
 package com.banasiak.java.janklight.client;
 
 import com.banasiak.java.janklight.Colors;
+import com.banasiak.java.janklight.JankLight;
 import com.banasiak.java.janklight.LedUtil;
 
 import org.eclipse.jetty.websocket.api.Session;
@@ -9,10 +10,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.IOException;
-
-import thingm.blink1.Blink1;
 
 @WebSocket(maxTextMessageSize = 64 * 1024)
 public class ClientSocket {
@@ -41,11 +40,13 @@ public class ClientSocket {
     @OnWebSocketMessage
     public void onMessage(String message) {
         System.out.println("Received message from server: " + message);
-        Color color = Colors.getColorForName(message);
-        if(color != null) {
-            Blink1 led = Blink1.open();
-            led.setRGB(color);
-            led.close();
+        if(message.equals(JankLight.PARTY_MODE)) {
+            LedUtil.cycleColors();
+        } else {
+            Color color = Colors.getColorForName(message);
+            if(color != null) {
+                LedUtil.setColor(color);
+            }
         }
     }
 }

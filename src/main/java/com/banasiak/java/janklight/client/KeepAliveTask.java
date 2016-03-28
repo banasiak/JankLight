@@ -12,7 +12,7 @@ public class KeepAliveTask implements Runnable {
     private static final long INTERVAL = 30000;
 
     public KeepAliveTask() {
-        System.out.println("KeepAliveTask started - will ping server every " + INTERVAL + " seconds");
+        System.out.println("KeepAliveTask started - will ping server every " + INTERVAL + " ms");
     }
 
     @Override
