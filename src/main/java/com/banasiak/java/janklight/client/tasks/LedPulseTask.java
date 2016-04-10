@@ -15,7 +15,7 @@ public class LedPulseTask implements StoppableRunnable {
                 LedUtil.blinkColor(Colors.GREEN, 2);
                 return;
             } else {
-                LedUtil.fadeToColor(Colors.YELLOW);
+                LedUtil.fadeToColor(Colors.CYAN);
             }
         }
     }
