@@ -1,6 +1,6 @@
 package com.banasiak.java.janklight;
 
-import java.awt.Color;
+import java.awt.*;
 
 public enum Colors {
     BLUE("blue", Color.BLUE),
@@ -32,10 +32,10 @@ public enum Colors {
         return value;
     }
 
-    public static Color getColorForName(String name) {
+    public static Colors getColorForName(String name) {
         for(Colors color : Colors.values()) {
             if(color.name.equals(name)) {
-                return color.value;
+                return color;
             }
         }
         return null;

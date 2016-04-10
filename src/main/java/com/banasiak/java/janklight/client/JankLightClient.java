@@ -1,57 +1,68 @@
 package com.banasiak.java.janklight.client;
 
-import org.eclipse.jetty.util.ssl.SslContextFactory;
+import com.banasiak.java.janklight.Colors;
+import com.banasiak.java.janklight.LedUtil;
+import com.banasiak.java.janklight.client.tasks.ClientConnectTask;
+import com.banasiak.java.janklight.client.tasks.LedPulseTask;
+import com.banasiak.java.janklight.client.tasks.StoppableRunnable;
+
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
 
-import java.net.URI;
+public class JankLightClient implements ConnectionListener {
 
-public class JankLightClient {
+    private Session session;
 
-    private static Session webSocketSession;
+    private StoppableRunnable ledTask;
 
-    private Thread keepAliveThread;
+    private Thread ledThread;
 
-    String server;
+    private String server;
 
     public JankLightClient(String server) {
         this.server = server;
-
-        keepAliveThread = new Thread(new KeepAliveTask());
-        keepAliveThread.start();
-
         System.out.println("Client instantiated");
     }
 
     public void connectToServer() {
-        // ignore the self-signed certificate for this prototype
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setTrustAll(true);
+        Thread connectionThread = new Thread(new ClientConnectTask(server, this));
+        connectionThread.start();
+    }
 
-        WebSocketClient client = new WebSocketClient(sslContextFactory);
-        ClientSocket socket = new ClientSocket();
+    @Override
+    public void connected(Session session) {
+        this.session = session;
+        stopLedThread();
+    }
 
-        try{
-            client.start();
-            URI uri = new URI("wss://" + server + "/socket/");
-            ClientUpgradeRequest request = new ClientUpgradeRequest();
+    @Override
+    public void disconnected() {
+        this.session = null;
+        LedUtil.blinkColor(Colors.RED, 2);
+    }
 
-            System.out.println("Connecting to: " + uri);
-            client.connect(socket, uri, request);
+    @Override
+    public void connecting() {
+        startLedThread();
+    }
 
-        } catch (Throwable t) {
-            t.printStackTrace();
+    @Override
+    public Session getSession() {
+        return session;
+    }
+
+    private void startLedThread() {
+        if (ledThread == null && ledTask == null) {
+            ledTask = new LedPulseTask();
+            ledThread = new Thread(ledTask);
+            ledThread.start();
         }
     }
 
-
-
-    public static void setSession(Session session) {
-        webSocketSession = session;
-    }
-
-    public static Session getSession() {
-        return webSocketSession;
+    private void stopLedThread() {
+        if (ledThread != null && ledTask != null) {
+            ledTask.stop();
+        }
+        ledTask = null;
+        ledThread = null;
     }
 }

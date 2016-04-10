@@ -11,7 +11,6 @@ import com.banasiak.java.janklight.JankLight;
 
 import org.eclipse.jetty.websocket.api.Session;
 
-import java.awt.Color;
 import java.io.IOException;
 
 import spark.Spark;
@@ -24,8 +23,9 @@ public class JankLightServer {
     private static final String CONNECTED_MESSAGE = "Jank Light is connected";
     private static final String DISCONNECTED_MESSAGE = "Jank Light is not connected";
 
-    String keystoreFile;
-    String keystorePassword;
+    private String keystoreFile;
+
+    private String keystorePassword;
 
     private static Session webSocketSession;
 
@@ -78,7 +78,7 @@ public class JankLightServer {
     }
 
     private boolean changeLightColor(String colorName) {
-        Color color = Colors.getColorForName(colorName);
+        Colors color = Colors.getColorForName(colorName);
         if(color != null) {
             if(webSocketSession != null) {
                 try {
