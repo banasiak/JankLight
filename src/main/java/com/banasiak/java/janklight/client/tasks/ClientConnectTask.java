@@ -18,6 +18,8 @@ public class ClientConnectTask implements StoppableRunnable {
 
     private static final long CONNECT_TIMEOUT = 10000;
 
+    private static final long IDLE_TIMEOUT = 43200000;
+
     private static final long KEEPALIVE_INTERVAL = 30000;
 
     private static final long RECONNECT_INTERVAL = 10000;
@@ -48,6 +50,7 @@ public class ClientConnectTask implements StoppableRunnable {
 
         WebSocketClient client = new WebSocketClient(sslContextFactory);
         client.setConnectTimeout(CONNECT_TIMEOUT);
+        client.setMaxIdleTimeout(IDLE_TIMEOUT);
 
         ClientSocket socket = new ClientSocket(connectionListener);
 
