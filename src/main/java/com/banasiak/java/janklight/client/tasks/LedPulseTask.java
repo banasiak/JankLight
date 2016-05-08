@@ -1,7 +1,7 @@
 package com.banasiak.java.janklight.client.tasks;
 
 import com.banasiak.java.janklight.Colors;
-import com.banasiak.java.janklight.LedUtil;
+import com.banasiak.java.janklight.client.JankLightClient;
 
 public class LedPulseTask implements StoppableRunnable {
 
@@ -12,10 +12,10 @@ public class LedPulseTask implements StoppableRunnable {
         while (true) {
             if (shouldStop) {
                 // blink green and end this thread because, because we're connected
-                LedUtil.blinkColor(Colors.GREEN, 2);
+                JankLightClient.getLedProvider().blinkColor(Colors.GREEN, 2);
                 return;
             } else {
-                LedUtil.fadeToColor(Colors.CYAN);
+                JankLightClient.getLedProvider().fadeToColor(Colors.CYAN);
             }
         }
     }

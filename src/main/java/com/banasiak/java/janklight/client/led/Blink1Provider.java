@@ -1,18 +1,15 @@
-package com.banasiak.java.janklight;
+package com.banasiak.java.janklight.client.led;
+
+import com.banasiak.java.janklight.Colors;
 
 import thingm.blink1.Blink1;
 
-public class LedUtil {
+public class Blink1Provider implements LedProviderInterface {
 
-    private static final int DELAY = 1000;
-
-    private LedUtil() {
-        // static class
-    }
-
-    public static void cycleColors() {
+    @Override
+    public void cycleColors() {
         Blink1 led = Blink1.open();
-        for(Colors color : Colors.values()) {
+        for (Colors color : Colors.values()) {
             led.setRGB(color.getValue());
             Blink1.pause(DELAY);
         }
@@ -20,24 +17,27 @@ public class LedUtil {
         led.close();
     }
 
-    public static void blinkColor(Colors color, int repeat) {
+    @Override
+    public void blinkColor(Colors color, int repeat) {
         Blink1 led = Blink1.open();
-        for(int i=0; i < repeat; i++) {
+        for (int i = 0; i < repeat; i++) {
             led.setRGB(color.getValue());
-            Blink1.pause(DELAY/2);
+            Blink1.pause(DELAY / 2);
             led.setRGB(Colors.BLACK.getValue());
-            Blink1.pause(DELAY/2);
+            Blink1.pause(DELAY / 2);
         }
         led.close();
     }
 
-    public static void setColor(Colors color) {
+    @Override
+    public void setColor(Colors color) {
         Blink1 led = Blink1.open();
         led.setRGB(color.getValue());
         led.close();
     }
 
-    public static void fadeToColor(Colors color) {
+    @Override
+    public void fadeToColor(Colors color) {
         Blink1 led = Blink1.open();
         led.setRGB(Colors.BLACK.getValue());
         led.fadeToRGB(2000, color.getValue());

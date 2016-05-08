@@ -2,7 +2,6 @@ package com.banasiak.java.janklight.client;
 
 import com.banasiak.java.janklight.Colors;
 import com.banasiak.java.janklight.JankLight;
-import com.banasiak.java.janklight.LedUtil;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -42,11 +41,11 @@ public class ClientSocket {
     public void onMessage(String message) {
         System.out.println("Received message from server: " + message);
         if(message.equals(JankLight.PARTY_MODE)) {
-            LedUtil.cycleColors();
+            JankLightClient.getLedProvider().cycleColors();
         } else {
             Colors color = Colors.getColorForName(message);
             if(color != null) {
-                LedUtil.setColor(color);
+                JankLightClient.getLedProvider().setColor(color);
             }
         }
     }
