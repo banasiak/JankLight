@@ -12,6 +12,8 @@ import com.banasiak.java.janklight.JankLight;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import spark.Spark;
 
@@ -27,7 +29,7 @@ public class JankLightServer {
 
     private String keystorePassword;
 
-    private static Session webSocketSession;
+    private static final Queue<Session> sessions = new ConcurrentLinkedDeque<>();
 
     public JankLightServer(String keystoreFile, String keystorePassword) {
         this.keystoreFile = keystoreFile;
@@ -70,7 +72,7 @@ public class JankLightServer {
                 }
                 break;
             case "IsConnectedIntent":
-                return (webSocketSession != null) ? CONNECTED_MESSAGE : DISCONNECTED_MESSAGE;
+                return (sessions.size() > 0) ? CONNECTED_MESSAGE : DISCONNECTED_MESSAGE;
             default:
                 return ERROR_MESSAGE;
         }
@@ -80,10 +82,12 @@ public class JankLightServer {
     private boolean changeLightColor(String colorName) {
         Colors color = Colors.getColorForName(colorName);
         if(color != null) {
-            if(webSocketSession != null) {
+            if (sessions != null) {
                 try {
-                    System.out.println("Set light color to: " + colorName);
-                    webSocketSession.getRemote().sendString(colorName);
+                    System.out.println("Set light color to: " + color.getName());
+                    for (Session session : sessions) {
+                        session.getRemote().sendString(color.getName());
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -92,16 +96,18 @@ public class JankLightServer {
             }
             return true;
         } else {
-            System.out.println("ERROR: Cannot set light to: " + colorName);
+            System.out.println("ERROR: Cannot change light color");
             return false;
         }
     }
 
     private boolean cycleLightColors() {
-        if (webSocketSession != null) {
+        if (sessions != null) {
             try {
                 System.out.println("Cycle light colors");
-                webSocketSession.getRemote().sendString(JankLight.PARTY_MODE);
+                for (Session session : sessions) {
+                    session.getRemote().sendString(JankLight.PARTY_MODE);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -138,11 +144,11 @@ public class JankLightServer {
         return null;
     }
 
-    public static void setSession(Session session) {
-        webSocketSession = session;
+    public static void addSession(Session session) {
+        sessions.add(session);
     }
 
-    public static Session getSession() {
-        return webSocketSession;
+    public static void removeSession(Session session) {
+        sessions.remove(session);
     }
 }
