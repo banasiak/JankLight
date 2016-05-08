@@ -1,6 +1,5 @@
 package com.banasiak.java.janklight.server;
 
-
 import com.banasiak.java.janklight.JankLight;
 
 import org.eclipse.jetty.websocket.api.Session;
@@ -19,14 +18,15 @@ public class ServerSocket {
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
-        JankLightServer.setSession(session);
-        System.out.println("WebSocket session connected");
+        JankLightServer.addSession(session);
+        System.out.println(
+                "New websocket session connected: " + session.getRemoteAddress().toString());
     }
 
     @OnWebSocketClose
-    public void onWebSocketClose(int statusCode, String reason) {
-        JankLightServer.setSession(null);
-        System.out.println("WebSocket session closed");
+    public void onWebSocketClose(Session session, int statusCode, String reason) {
+        JankLightServer.removeSession(session);
+        System.out.println("WebSocket session closed: " + session.getRemoteAddress().toString());
     }
 
     @OnWebSocketMessage
